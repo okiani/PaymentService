@@ -1,6 +1,8 @@
 package com.example.paymentservice.Entity;
 
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.sql.Date;
@@ -14,16 +16,25 @@ public class Card {
     @GeneratedValue
     private Long id;
 
-    private User user;
-
     private String cardNumber;
     private String holderName;
     private String cardType;
+    private Integer cvv2;
     private Date expiredDate;
-    private String csv;
     private Double dailyLimit;
     private Boolean status;
 
-    public Card() {
+    @CreationTimestamp
+    private Date createdAt;
+
+    @UpdateTimestamp
+    private Date updatedAt;
+
+    /*@ManyToOne(fetch = FetchType.LAZY, optional = false)
+    private User user;*/
+
+    @Override
+    public String toString() {
+        return String.format("Card[id=%d, cardNumber='%s', holderName='%s', cardType='%s']", id, cardNumber, holderName, cardType);
     }
 }
