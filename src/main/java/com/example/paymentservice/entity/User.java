@@ -1,4 +1,4 @@
-package com.example.paymentservice.Entity;
+package com.example.paymentservice.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;

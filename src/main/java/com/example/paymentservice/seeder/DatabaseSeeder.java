@@ -1,7 +1,7 @@
-package com.example.paymentservice.Seeder;
+package com.example.paymentservice.seeder;
 
-import com.example.paymentservice.Entity.User;
-import com.example.paymentservice.Repository.IUserRepository;
+import com.example.paymentservice.entity.User;
+import com.example.paymentservice.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
