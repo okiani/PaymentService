@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 @Data
 @Setter
 @Getter
-@Table(name = "USERS")
+@Table(name = "users")
 public class User {
 
     @Id

@@ -45,14 +45,6 @@ public class CardController {
 
         CardDto cardResponse = cardService.update(id, cardDto);
         return ResponseEntity.ok().body(cardResponse);
-
-        /*// convert DTO to Entity
-        Card cardRequest = modelMapper.map(cardDto, Card.class);
-        Card card = cardService.update(id, cardRequest);
-
-        // entity to DTO
-        CardDto cardResponse = modelMapper.map(card, CardDto.class);
-        return ResponseEntity.ok().body(cardResponse);*/
     }
 
     @DeleteMapping({"/delete/{id}"})

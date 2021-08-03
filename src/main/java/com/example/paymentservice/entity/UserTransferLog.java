@@ -1,6 +1,11 @@
 package com.example.paymentservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -9,20 +14,18 @@ import java.sql.Date;
 
 @Entity
 @Data
-@Table(name = "CARDS")
-public class Card {
+@Setter
+@Getter
+@Table(name = "user_transfer_logs")
+public class UserTransferLog {
 
     @Id
     @GeneratedValue
     private Long id;
 
-    private String cardNumber;
-    private String holderName;
-    private String cardType;
-    private Integer cvv2;
-    private Date expiredDate;
-    private Double dailyLimit;
-    private Boolean status;
+    private String destinationCardNumber;
+    private Double price;
+    private String trackingCode;
 
     @CreationTimestamp
     private Date createdAt;
@@ -33,8 +36,7 @@ public class Card {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private User user;
 
-    @Override
-    public String toString() {
-        return String.format("Card[id=%d, cardNumber='%s', holderName='%s', cardType='%s']", id, cardNumber, holderName, cardType);
-    }
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    private Card card;
 }
+
