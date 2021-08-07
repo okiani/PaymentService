@@ -3,6 +3,7 @@ package com.example.paymentservice.entity;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
 import java.sql.Date;
@@ -17,7 +18,9 @@ public class Currency {
     private Long id;
 
     private String name;
-    private String description;
+
+//    @Value("${currency_descriptor}")
+    private String descriptor;
     private String sign;
     private Boolean status;
 

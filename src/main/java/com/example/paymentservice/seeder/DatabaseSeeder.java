@@ -33,10 +33,13 @@ public class DatabaseSeeder {
     }
 
     private void seedUsersTable() {
+
         String sql = "SELECT * FROM users";
         List<User> u = jdbcTemplate.query(sql, (resultSet, rowNum) -> null);
 
         if(u == null || u.size() <= 0) {
+
+            //user1
             User user = new User();
             user.setUsername("omidkiani");
             user.setEmail("k@k.com");
@@ -46,8 +49,19 @@ public class DatabaseSeeder {
             user.setAddress("iran,tehran");
             user.setMobile("09331116877");
             user.setPhoneNumber("02177483297");
-
             userRepository.save(user);
+
+            //user 2
+            User user2 = new User();
+            user2.setUsername("ali hosseini");
+            user2.setEmail("a@a.com");
+            user2.setPassword(new BCryptPasswordEncoder().encode("test123456"));
+            user2.setStatus(true);
+            user2.setConfirmEmail(true);
+            user2.setAddress("iran,tehran");
+            user2.setMobile("09124788391");
+            user2.setPhoneNumber("02199894673");
+            userRepository.save(user2);
 
             System.out.println("success");
         } else {

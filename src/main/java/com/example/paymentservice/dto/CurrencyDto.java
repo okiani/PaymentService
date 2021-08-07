@@ -3,6 +3,7 @@ package com.example.paymentservice.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.sql.Date;
 
@@ -16,8 +17,8 @@ public class CurrencyDto {
     @JsonProperty("name")
     private String name;
 
-    @JsonProperty("description")
-    private String description;
+    @JsonProperty("descriptor")
+    private String descriptor;
 
     @JsonProperty("sign")
     private String sign;

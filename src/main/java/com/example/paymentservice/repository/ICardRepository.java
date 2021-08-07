@@ -13,7 +13,7 @@ public interface ICardRepository extends JpaRepository<Card, Long> {
 
 //    List<Card> findAll();
 
-//    Card findById(Long id);
+    Card findByUserId(Long id);
 
 //    Card findByCardNumber(String cardNumber);
     Optional<Card> findByCardNumber(String cardNumber);

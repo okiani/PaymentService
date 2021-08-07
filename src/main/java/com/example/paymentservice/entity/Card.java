@@ -1,6 +1,8 @@
 package com.example.paymentservice.entity;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -9,6 +11,8 @@ import java.sql.Date;
 
 @Entity
 @Data
+@Setter
+@Getter
 @Table(name = "CARDS")
 public class Card {
 
@@ -25,6 +29,7 @@ public class Card {
     private Boolean status;
 
     @CreationTimestamp
+    @Column(name="created_at", columnDefinition="TIMESTAMP")
     private Date createdAt;
 
     @UpdateTimestamp
