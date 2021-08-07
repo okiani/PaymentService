@@ -53,4 +53,9 @@ public class CardController {
         cardService.delete(id);
         return new ResponseEntity<>("card number: " + id + " removed!", HttpStatus.OK);
     }
+
+    @GetMapping("/card-numbers")
+    public List<String> getAllCardNumber() {
+        return cardService.getAllCardNumber();
+    }
 }

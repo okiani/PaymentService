@@ -17,4 +17,6 @@ public interface ICardService {
     CardDto findById(Long id);
 
     CardDto findByCardNumber(String cardNumber);
+
+    List<String> getAllCardNumber();
 }

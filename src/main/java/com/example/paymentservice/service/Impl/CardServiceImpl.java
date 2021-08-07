@@ -9,8 +9,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -70,7 +70,6 @@ public class CardServiceImpl implements ICardService {
     public void delete(Long id) {
         Card card = cardRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Card Id : " + id));
-
         cardRepository.delete(card);
     }
 
@@ -91,8 +90,53 @@ public class CardServiceImpl implements ICardService {
         Optional<Card> card = cardRepository.findByCardNumber(cardNumber);
         if (card.isPresent()) {
             return modelMapper.map(card.get(), CardDto.class);
-        } else {
-            throw new NotFoundException("Card Number: " + cardNumber);
         }
+        throw new NotFoundException("Card Number: " + cardNumber);
     }
+
+    @Override
+    public List<String> getAllCardNumber() {
+
+        /*List<String> card = cardRepository.getAllCardNumber();
+        HashMap<String, String> res = new HashMap<>();
+
+        res.put("c", card);
+
+        return new ResponseEntity<String>("data", res, HttpStatus.OK);*/
+
+//        res.put("card_number", card);
+//        return new ResponseEntity<>(res, HttpStatus.OK);
+
+        /*-------------------------*/
+        /*List<String> list = cardRepository.getAllCardNumber();
+//        List<String> list = new ArrayList<>();
+        list.add("Mohan");
+        list.add("Sohan");
+        list.add("Mahesh");
+        Map<String, String> map = list.stream().collect(Collectors.toMap(Function.identity(), s->s));
+//        map.forEach((x, y) -> System.out.println("Key: " + x +", value: "+ y));
+        map.forEach((x, y) -> System.out.println("Key: " + x +", value: "+ y));*/
+
+
+        return cardRepository.getAllCardNumber();
+    }
+
+    /*public ResponseEntity<?> findAll() {
+
+        List<Card> cardList = cardServiceImpl.getAll();
+
+        if (cardList != null) {
+            HashMap<String, Object> res = new HashMap<>();
+            res.put("status_code", 200);
+            res.put("message", "Find list card success");
+            res.put("data", cardList);
+            return new ResponseEntity<>(res, HttpStatus.OK);
+        }
+
+        HashMap<String, Object> res = new HashMap<>();
+        res.put("status_code", 404);
+        res.put("message", "not found");
+
+        return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+    }*/
 }
