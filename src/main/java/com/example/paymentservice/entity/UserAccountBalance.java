@@ -8,25 +8,20 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.sql.Timestamp;
 
 @Entity
-@Data
 @Setter
 @Getter
-@Table(name = "user_account_balances")
+@Table(name = "USER_ACCOUNT_BALANCES")
 public class UserAccountBalance {
 
     @Id
     @GeneratedValue
     private Long id;
-
     private Double accountBalance;
-
-    @CreationTimestamp
-    private Date createdAt;
-
-    @UpdateTimestamp
-    private Date updatedAt;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private User user;

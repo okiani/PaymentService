@@ -1,37 +1,25 @@
 package com.example.paymentservice.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.sql.Timestamp;
 
 @Entity
-@Data
 @Setter
 @Getter
-@Table(name = "user_transfer_logs")
+@Table(name = "USER_TRANSFER_LOGS")
 public class UserTransferLog {
 
     @Id
     @GeneratedValue
     private Long id;
-
     private String destinationCardNumber;
     private Double price;
     private String trackingCode;
-
-    @CreationTimestamp
-    private Date createdAt;
-
-    @UpdateTimestamp
-    private Date updatedAt;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private User user;

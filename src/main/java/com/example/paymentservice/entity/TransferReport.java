@@ -8,6 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.sql.Timestamp;
 
 @Entity
 @Data
@@ -19,15 +20,10 @@ public class TransferReport {
     @Id
     @GeneratedValue
     private Long id;
-
     private String message;
     private Boolean success;
-
-    @CreationTimestamp
-    private Date createdAt;
-
-    @UpdateTimestamp
-    private Date updatedAt;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private UserTransferLog userTransferLog;

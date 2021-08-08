@@ -8,9 +8,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.sql.Timestamp;
 
 @Entity
-@Data
 @Setter
 @Getter
 @Table(name = "CARDS")
@@ -19,21 +19,15 @@ public class Card {
     @Id
     @GeneratedValue
     private Long id;
-
     private String cardNumber;
     private String holderName;
     private String cardType;
     private Integer cvv2;
-    private Date expiredDate;
+    private Timestamp expiredDate;
     private Double dailyLimit;
     private Boolean status;
-
-    @CreationTimestamp
-    @Column(name="created_at", columnDefinition="TIMESTAMP")
-    private Date createdAt;
-
-    @UpdateTimestamp
-    private Date updatedAt;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private User user;
