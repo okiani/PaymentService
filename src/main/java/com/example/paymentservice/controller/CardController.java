@@ -22,7 +22,6 @@ public class CardController {
 
     @GetMapping("/list")
     public List<CardDto> findAll() {
-
         return cardService.findAll();
     }
 

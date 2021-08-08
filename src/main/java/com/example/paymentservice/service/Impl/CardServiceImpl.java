@@ -2,15 +2,20 @@ package com.example.paymentservice.service.Impl;
 
 import com.example.paymentservice.dto.CardDto;
 import com.example.paymentservice.entity.Card;
+import com.example.paymentservice.entity.User;
 import com.example.paymentservice.exception.NotFoundException;
 import com.example.paymentservice.repository.ICardRepository;
+import com.example.paymentservice.repository.IUserRepository;
 import com.example.paymentservice.service.ICardService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -22,9 +27,15 @@ public class CardServiceImpl implements ICardService {
     private ModelMapper modelMapper;
 
     private final ICardRepository cardRepository;
+    private final IUserRepository userRepository;
+    private Environment env;
 
-    public CardServiceImpl(ICardRepository cardRepository) {
+    public CardServiceImpl(ICardRepository cardRepository,
+                           IUserRepository userRepository,
+                           Environment env) {
         this.cardRepository = cardRepository;
+        this.userRepository = userRepository;
+        this.env = env;
     }
 
     @Override
@@ -39,12 +50,27 @@ public class CardServiceImpl implements ICardService {
     @Override
     public CardDto save(CardDto cardDto) {
 
+        User user = userRepository.findById(Long.valueOf(env.getProperty("user_id")))
+                .orElseThrow(() -> new NotFoundException("User Id : " + env.getProperty("user_id")));
+
         // convert DTO to entity
         Card cardRequest = modelMapper.map(cardDto, Card.class);
-        Card card = cardRepository.save(cardRequest);
+
+        Card card = new Card();
+        card.setUser(user);
+        card.setHolderName(cardRequest.getHolderName());
+        card.setCardNumber(cardRequest.getCardNumber());
+        card.setCardType(cardRequest.getCardType());
+        card.setCvv2(cardRequest.getCvv2());
+        card.setExpiredDate(cardRequest.getExpiredDate());
+        card.setStatus(cardRequest.getStatus());
+        card.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
+        card.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
+
+        Card cardResponseEntity = cardRepository.save(card);
 
         // convert entity to DTO
-        return modelMapper.map(card, CardDto.class);
+        return modelMapper.map(cardResponseEntity, CardDto.class);
     }
 
     @Override
@@ -56,12 +82,13 @@ public class CardServiceImpl implements ICardService {
         Card card = cardRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Card Id : " + id));
 
+        card.setHolderName(cardRequest.getHolderName());
         card.setCardNumber(cardRequest.getCardNumber());
         card.setCardType(cardRequest.getCardType());
-        card.setHolderName(cardRequest.getHolderName());
-        card.setExpiredDate(cardRequest.getExpiredDate());
         card.setCvv2(cardRequest.getCvv2());
+        card.setExpiredDate(cardRequest.getExpiredDate());
         card.setStatus(cardRequest.getStatus());
+        card.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
         cardRepository.save(card);
 
         // entity to DTO

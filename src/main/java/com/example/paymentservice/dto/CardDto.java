@@ -1,5 +1,6 @@
 package com.example.paymentservice.dto;
 
+import com.example.paymentservice.entity.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -54,6 +55,9 @@ public class CardDto {
 
     @JsonProperty("user_id")
     private Long userId;
+
+    @JsonProperty("user")
+    UserDto userDto;
 
     /*@JsonProperty("daily_limit")
     private Double dailyLimit;*/
