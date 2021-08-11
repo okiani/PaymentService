@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 @Setter
@@ -22,7 +23,7 @@ public class User {
     private String address;
 
     /*@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<Card> cards;*/
+    private List<Card> cards;*/
 
     private String password;
     private Boolean status;

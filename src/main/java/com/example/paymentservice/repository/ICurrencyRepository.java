@@ -1,5 +1,6 @@
 package com.example.paymentservice.repository;
 
+import com.example.paymentservice.entity.Card;
 import com.example.paymentservice.entity.Currency;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -11,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface ICurrencyRepository extends JpaRepository<Currency, Long> {
 
-    Currency findByDescriptor(String descriptor);
+    Optional<Currency> findByDescriptor(String descriptor);
 
     void deleteById(Long id);
 }

@@ -1,40 +1,34 @@
 package com.example.paymentservice.entity;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.sql.Date;
 import java.sql.Timestamp;
 
 @Entity
 @Setter
 @Getter
-@Table(name = "CARDS")
-public class Card {
+@Table(name = "TRANSFER_BALANCES")
+public class TransferBalance {
 
     @Id
     @GeneratedValue
     private Long id;
-    private String cardNumber;
     private Double balance;
-    private String holderName;
-    private String cardType;
-    private Integer cvv2;
-    private Timestamp expiredDate;
-    private Double dailyLimit;
-    private Boolean status;
+    private Double transferAmount;
+    private Double withdraw;
+    private Double deposit;
+    private String destinationCardNumber;
+    private String trackingCode;
     private Timestamp createdAt;
     private Timestamp updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    private User user;
+    private Card card;
 
-    @Override
+    /*@Override
     public String toString() {
         return String.format("Card[id=%d, cardNumber='%s', holderName='%s', cardType='%s']", id, cardNumber, holderName, cardType);
-    }
+    }*/
 }

@@ -1,20 +1,15 @@
 package com.example.paymentservice.exception;
 
-public class NotFoundException extends RuntimeException {
+import org.springframework.http.HttpStatus;
 
-    public NotFoundException() {
-        super();
+public class NotFoundException extends BusinessException {
+
+    public NotFoundException(String message, int errorCode) {
+
+        super(message, errorCode);
     }
 
-    public NotFoundException(String message) {
-        super(message);
-    }
-
-    public NotFoundException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public NotFoundException(Throwable cause) {
-        super(cause);
+    public NotFoundException(String message, int errorCode, HttpStatus httpStatus) {
+        super(message, errorCode, httpStatus);
     }
 }

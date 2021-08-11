@@ -15,4 +15,6 @@ public interface ICurrencyService {
     void delete(Long id);
 
     CurrencyDto findById(Long id);
+
+    CurrencyDto findByDescriptor(String descriptor);
 }

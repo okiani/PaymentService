@@ -1,6 +1,8 @@
 package com.example.paymentservice.service.Impl;
 
+import com.example.paymentservice.constant.JsonDictionary;
 import com.example.paymentservice.dto.CardDto;
+import com.example.paymentservice.dto.CardNumberDto;
 import com.example.paymentservice.entity.Card;
 import com.example.paymentservice.entity.User;
 import com.example.paymentservice.exception.NotFoundException;
@@ -11,13 +13,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,17 +41,23 @@ public class CardServiceImpl implements ICardService {
     @Override
     public List<CardDto> findAll() {
 
-        return cardRepository.findAll()
+        List<CardDto> cardDto = cardRepository.findAll()
                 .stream()
                 .map(card -> modelMapper.map(card, CardDto.class))
                 .collect(Collectors.toList());
+
+        if (cardDto.isEmpty()) {
+            throw new NotFoundException(JsonDictionary.NOT_FOUND, 404, HttpStatus.NOT_FOUND);
+        }
+
+        return cardDto;
     }
 
     @Override
     public CardDto save(CardDto cardDto) {
 
         User user = userRepository.findById(Long.valueOf(env.getProperty("user_id")))
-                .orElseThrow(() -> new NotFoundException("User Id : " + env.getProperty("user_id")));
+                .orElseThrow(() -> new NotFoundException("Not Found User Id: " + env.getProperty("user_id"), 404));
 
         // convert DTO to entity
         Card cardRequest = modelMapper.map(cardDto, Card.class);
@@ -80,8 +86,9 @@ public class CardServiceImpl implements ICardService {
         Card cardRequest = modelMapper.map(cardDto, Card.class);
 
         Card card = cardRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Card Id : " + id));
+                .orElseThrow(() -> new NotFoundException("Not Found Card Id: " + id, 404));
 
+        card.setBalance(cardRequest.getBalance());
         card.setHolderName(cardRequest.getHolderName());
         card.setCardNumber(cardRequest.getCardNumber());
         card.setCardType(cardRequest.getCardType());
@@ -98,7 +105,8 @@ public class CardServiceImpl implements ICardService {
     @Override
     public void delete(Long id) {
         Card card = cardRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Card Id : " + id));
+                .orElseThrow(() -> new NotFoundException("Not Found Card Id: " + id, 404));
+
         cardRepository.delete(card);
     }
 
@@ -110,7 +118,7 @@ public class CardServiceImpl implements ICardService {
             // convert entity to DTO
             return modelMapper.map(card.get(), CardDto.class);
         }
-        throw new NotFoundException("Card Id: " + id);
+        throw new NotFoundException("Not Found Card Id: " + id, 404);
     }
 
     @Override
@@ -120,52 +128,45 @@ public class CardServiceImpl implements ICardService {
         if (card.isPresent()) {
             return modelMapper.map(card.get(), CardDto.class);
         }
-        throw new NotFoundException("Card Number: " + cardNumber);
+        throw new NotFoundException("Not Found Card Number: " + cardNumber, 404);
     }
 
     @Override
-    public List<String> getAllCardNumber() {
+    public CardDto findByUserId(Long userId) {
 
-        /*List<String> card = cardRepository.getAllCardNumber();
-        HashMap<String, String> res = new HashMap<>();
+        Optional<Card> card = cardRepository.findByUserId(userId);
 
-        res.put("c", card);
-
-        return new ResponseEntity<String>("data", res, HttpStatus.OK);*/
-
-//        res.put("card_number", card);
-//        return new ResponseEntity<>(res, HttpStatus.OK);
-
-        /*-------------------------*/
-        /*List<String> list = cardRepository.getAllCardNumber();
-//        List<String> list = new ArrayList<>();
-        list.add("Mohan");
-        list.add("Sohan");
-        list.add("Mahesh");
-        Map<String, String> map = list.stream().collect(Collectors.toMap(Function.identity(), s->s));
-//        map.forEach((x, y) -> System.out.println("Key: " + x +", value: "+ y));
-        map.forEach((x, y) -> System.out.println("Key: " + x +", value: "+ y));*/
-
-
-        return cardRepository.getAllCardNumber();
+        if (card.isPresent()) {
+            // convert entity to DTO
+            return modelMapper.map(card.get(), CardDto.class);
+        }
+        throw new NotFoundException("Not Found Card User Id: " + userId, 404);
     }
 
-    /*public ResponseEntity<?> findAll() {
+    @Override
+    public CardDto findByUserIdByCardNumber(Long userId, String cardNumber) {
 
-        List<Card> cardList = cardServiceImpl.getAll();
+        Optional<Card> card = cardRepository.findByUserIdByCardNumber(userId, cardNumber);
 
-        if (cardList != null) {
-            HashMap<String, Object> res = new HashMap<>();
-            res.put("status_code", 200);
-            res.put("message", "Find list card success");
-            res.put("data", cardList);
-            return new ResponseEntity<>(res, HttpStatus.OK);
+        if (card.isPresent()) {
+            // convert entity to DTO
+            return modelMapper.map(card.get(), CardDto.class);
+        }
+        throw new NotFoundException("Not Found Card with User Id: " + userId + " and " + " CardNumber: " + cardNumber, 404);
+    }
+
+    @Override
+    public List<CardNumberDto> getAllCardNumber() {
+
+        List<CardNumberDto> cardNumberDtoList = cardRepository.getAllCardNumber()
+                .stream()
+                .map(card -> modelMapper.map(card, CardNumberDto.class))
+                .collect(Collectors.toList());
+
+        if (cardNumberDtoList.isEmpty()) {
+            throw new NotFoundException(JsonDictionary.NOT_FOUND, 404, HttpStatus.NOT_FOUND);
         }
 
-        HashMap<String, Object> res = new HashMap<>();
-        res.put("status_code", 404);
-        res.put("message", "not found");
-
-        return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
-    }*/
+        return cardNumberDtoList;
+    }
 }

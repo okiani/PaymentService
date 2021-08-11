@@ -1,6 +1,7 @@
 package com.example.paymentservice.service;
 
 import com.example.paymentservice.dto.CardDto;
+import com.example.paymentservice.dto.CardNumberDto;
 
 import java.util.List;
 
@@ -16,7 +17,11 @@ public interface ICardService {
 
     CardDto findById(Long id);
 
+    CardDto findByUserId(Long id);
+
     CardDto findByCardNumber(String cardNumber);
 
-    List<String> getAllCardNumber();
+    CardDto findByUserIdByCardNumber(Long id, String cardNumber);
+
+    List<CardNumberDto> getAllCardNumber();
 }

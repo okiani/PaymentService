@@ -3,6 +3,7 @@ package com.example.paymentservice.service.Impl;
 import com.example.paymentservice.dto.CardDto;
 import com.example.paymentservice.dto.CurrencyDto;
 import com.example.paymentservice.entity.Card;
+import com.example.paymentservice.entity.Currency;
 import com.example.paymentservice.exception.NotFoundException;
 import com.example.paymentservice.repository.ICardRepository;
 import com.example.paymentservice.repository.ICurrencyRepository;
@@ -55,5 +56,15 @@ public class CurrencyServiceImpl implements ICurrencyService {
     @Override
     public CurrencyDto findById(Long id) {
         return null;
+    }
+
+    @Override
+    public CurrencyDto findByDescriptor(String descriptor) {
+
+        Optional<Currency> currency = currencyRepository.findByDescriptor(descriptor);
+        if (currency.isPresent()) {
+            return modelMapper.map(currency.get(), CurrencyDto.class);
+        }
+        throw new NotFoundException("Not Found Currency Descriptor: " + descriptor, 404);
     }
 }

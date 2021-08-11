@@ -1,6 +1,5 @@
 package com.example.paymentservice.dto;
 
-import com.example.paymentservice.entity.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -10,14 +9,12 @@ import lombok.Setter;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.math.BigInteger;
-import java.sql.Date;
 import java.sql.Timestamp;
 
 @Getter
 @Setter
 @Data
-public class CardDto {
+public class CardRequestDto {
 
     @JsonProperty("id")
     private Long id;
@@ -34,13 +31,6 @@ public class CardDto {
 
     @JsonProperty("amount")
     private Double amount;
-
-    @JsonProperty("balance")
-    private Double balance;
-
-    @NotNull(message = "Holder Name cannot be null")
-    @JsonProperty("holder_name")
-    private String holderName;
 
     @JsonProperty("card_type")
     private String cardType;
@@ -64,9 +54,6 @@ public class CardDto {
     @JsonProperty("updated_at")
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT+7")
     private Timestamp updatedAt;
-
-    /*@JsonProperty("user_id")
-    private Long userId;*/
 
     @JsonProperty("user")
     UserDto userDto;
