@@ -3,8 +3,6 @@ package com.example.paymentservice.controller;
 import com.example.paymentservice.constant.JsonDictionary;
 import com.example.paymentservice.dto.CardDto;
 import com.example.paymentservice.dto.CardNumberDto;
-import com.example.paymentservice.entity.Card;
-import com.example.paymentservice.exception.NotFoundException;
 import com.example.paymentservice.response.ResponseHandler;
 import com.example.paymentservice.service.ICardService;
 import org.springframework.http.HttpStatus;

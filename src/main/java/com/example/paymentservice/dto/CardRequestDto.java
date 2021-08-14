@@ -58,6 +58,4 @@ public class CardRequestDto {
     @JsonProperty("user")
     UserDto userDto;
 
-    /*@JsonProperty("daily_limit")
-    private Double dailyLimit;*/
 }

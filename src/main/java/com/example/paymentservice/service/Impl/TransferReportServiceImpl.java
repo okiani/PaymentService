@@ -1,8 +1,6 @@
 package com.example.paymentservice.service.Impl;
 
 import com.example.paymentservice.dto.TransferReportDto;
-import com.example.paymentservice.entity.TransferReport;
-import com.example.paymentservice.entity.UserTransferLog;
 import com.example.paymentservice.repository.ITransferReportRepository;
 import com.example.paymentservice.service.ITransferReportService;
 import org.modelmapper.ModelMapper;
@@ -23,6 +21,10 @@ public class TransferReportServiceImpl implements ITransferReportService {
         this.modelMapper = modelMapper;
     }
 
+    public TransferReportDto createTransferReport() {
+        return null;
+    }
+
     /*@Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public TransferReportDto createTransferReport(UserTransferLog userTransferLog, String message, Boolean status) {
@@ -33,7 +35,7 @@ public class TransferReportServiceImpl implements ITransferReportService {
         return this._createTransferReport(userTransferLog, message, status);
     }*/
 
-    public TransferReportDto createTransferReport(UserTransferLog userTransferLog, String message, Boolean status) {
+    /*public TransferReportDto createTransferReport(UserTransferLog userTransferLog, String message, Boolean status) {
         TransferReport transferReport = new TransferReport();
         transferReport.setUserTransferLog(userTransferLog);
         transferReport.setMessage(message);
@@ -42,5 +44,5 @@ public class TransferReportServiceImpl implements ITransferReportService {
 
         // convert entity to DTO
         return modelMapper.map(transferReportEntity, TransferReportDto.class);
-    }
+    }*/
 }

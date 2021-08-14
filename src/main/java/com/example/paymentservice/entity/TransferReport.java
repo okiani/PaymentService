@@ -25,7 +25,7 @@ public class TransferReport {
     private Timestamp createdAt;
     private Timestamp updatedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    private UserTransferLog userTransferLog;
+    /*@ManyToOne(fetch = FetchType.LAZY, optional = false)
+    private UserTransferLog userTransferLog;*/
 }
 
