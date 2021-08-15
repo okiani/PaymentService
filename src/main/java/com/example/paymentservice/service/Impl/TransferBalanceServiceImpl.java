@@ -10,10 +10,12 @@ import com.example.paymentservice.exception.OverDraftException;
 import com.example.paymentservice.repository.ITransferBalanceRepository;
 import com.example.paymentservice.service.*;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 
 @Service
@@ -25,6 +27,10 @@ public class TransferBalanceServiceImpl implements ITransferBalanceService {
     private final IUserService userService;
     private final ICardService cardService;
     private ModelMapper modelMapper;
+    private RestTemplate restTemplate;
+
+    @Value("${resource.notification}/email")
+    private String emailResource;
 
     public TransferBalanceServiceImpl(
             ITransferBalanceRepository transferBalanceRepository,
@@ -32,7 +38,8 @@ public class TransferBalanceServiceImpl implements ITransferBalanceService {
             IUserService userService,
             ICardService cardService,
             ModelMapper modelMapper,
-            Environment env
+            Environment env,
+            RestTemplate restTemplate
     ) {
         this.transferBalanceRepository = transferBalanceRepository;
         this.currencyService = currencyService;
@@ -40,6 +47,7 @@ public class TransferBalanceServiceImpl implements ITransferBalanceService {
         this.userService = userService;
         this.modelMapper = modelMapper;
         this.env = env;
+        this.restTemplate = restTemplate;
     }
 
     @Override
@@ -63,7 +71,7 @@ public class TransferBalanceServiceImpl implements ITransferBalanceService {
         if (card.getCardNumber().equals(cardRequestDto.getDestinationCardNumber())) {
             //todo: create record for transfer report
 //            transferReportService.createTransferReport();
-           throw  new NotFoundException("Not Found The entered card number does not match the name of the desired card number" , 404);
+            throw new NotFoundException("Not Found The entered card number does not match the name of the desired card number", 404);
         }
 
         // check card balances is != 0 by userId
@@ -91,6 +99,17 @@ public class TransferBalanceServiceImpl implements ITransferBalanceService {
         this.createTransferBalance(destinationCardDto, cardRequestDto, false);
 
         //todo: 4-2: send notification (sms)
+
+        //fill request body
+        EmailRequestDto emailRequestDto = new EmailRequestDto("Test Body of the message", "sender@gmail.com", "Notification Service Test Subject", "kiani.ernyka@gmail.com");
+
+        //set headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Object> entity = new HttpEntity<Object>(emailRequestDto, headers);
+
+        //call rest
+        restTemplate.postForObject(emailResource, entity, String.class);
     }
 
     @Override
