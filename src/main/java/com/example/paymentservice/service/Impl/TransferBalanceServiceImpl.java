@@ -9,6 +9,7 @@ import com.example.paymentservice.exception.NotFoundException;
 import com.example.paymentservice.exception.OverDraftException;
 import com.example.paymentservice.repository.ITransferBalanceRepository;
 import com.example.paymentservice.service.*;
+import org.hibernate.query.criteria.internal.expression.function.CurrentDateFunction;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -16,6 +17,9 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 
 @Service
@@ -31,6 +35,9 @@ public class TransferBalanceServiceImpl implements ITransferBalanceService {
 
     @Value("${resource.notification}/email")
     private String emailResource;
+
+    @Value("${resource.notification}/sms")
+    private String smsResource;
 
     public TransferBalanceServiceImpl(
             ITransferBalanceRepository transferBalanceRepository,
@@ -89,7 +96,7 @@ public class TransferBalanceServiceImpl implements ITransferBalanceService {
         cardService.update(sourceCardDto.getId(), sourceCardDto);
 
         //create transfer log for every reduce or increase
-        this.createTransferBalance(sourceCardDto, cardRequestDto, true);
+        TransferBalanceDto transferBalanceWithdrawDto = this.createTransferBalance(sourceCardDto, cardRequestDto, true);
 
         //we should increase the destination card balance
         destinationCardDto.setBalance(destinationCard.getBalance() + cardRequestDto.getAmount());
@@ -100,16 +107,43 @@ public class TransferBalanceServiceImpl implements ITransferBalanceService {
 
         //todo: 4-2: send notification (sms)
 
-        //fill request body
-        EmailRequestDto emailRequestDto = new EmailRequestDto("Test Body of the message", "sender@gmail.com", "Notification Service Test Subject", "kiani.ernyka@gmail.com");
+        //fill request body for send email
+        /*EmailRequestDto emailRequestDto = new EmailRequestDto(
+                "transfer was successfully. " + "\n"
+                        + "withdraw: " + transferBalanceWithdrawDto.getWithdraw() + "\n"
+                        + "balance: " + transferBalanceWithdrawDto.getBalance() + "\n"
+                        + "current time: " + Timestamp.valueOf(LocalDateTime.now()),
+
+                env.getProperty("sender_email"),
+                "Transfer Notification",
+                currentUserDto.getEmail());
 
         //set headers
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Object> entity = new HttpEntity<Object>(emailRequestDto, headers);
 
-        //call rest
-        restTemplate.postForObject(emailResource, entity, String.class);
+        //call rest for send email
+        restTemplate.postForObject(emailResource, entity, String.class);*/
+
+        /*-------------------------------------------------------------------------------------------*/
+
+        //fill request body for send sms
+        SmsRequestDto smsRequestDto = new SmsRequestDto(
+                currentUser.getMobile(),
+                "transfer was successfully " + "\n"
+                        + "withdraw: " + transferBalanceWithdrawDto.getWithdraw() + "\n"
+                        + "balance: " + transferBalanceWithdrawDto.getBalance() + "\n"
+                        + "current time: " + Timestamp.valueOf(LocalDateTime.now())
+        );
+
+        //set headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Object> entity = new HttpEntity<Object>(smsRequestDto, headers);
+
+        //call rest for send sms
+        restTemplate.postForObject(smsResource, entity, String.class);
     }
 
     @Override
