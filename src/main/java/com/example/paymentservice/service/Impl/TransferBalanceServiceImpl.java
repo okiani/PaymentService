@@ -9,8 +9,15 @@ import com.example.paymentservice.exception.NotFoundException;
 import com.example.paymentservice.exception.OverDraftException;
 import com.example.paymentservice.repository.ITransferBalanceRepository;
 import com.example.paymentservice.service.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.query.criteria.internal.expression.function.CurrentDateFunction;
 import org.modelmapper.ModelMapper;
+import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.amqp.core.MessageBuilder;
+import org.springframework.amqp.core.MessageProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
@@ -20,9 +27,11 @@ import org.springframework.web.client.RestTemplate;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 
 @Service
+@Slf4j
 public class TransferBalanceServiceImpl implements ITransferBalanceService {
 
     private final ITransferBalanceRepository transferBalanceRepository;
@@ -32,6 +41,15 @@ public class TransferBalanceServiceImpl implements ITransferBalanceService {
     private final ICardService cardService;
     private ModelMapper modelMapper;
     private RestTemplate restTemplate;
+
+    @Autowired
+    private AmqpTemplate rabbitTemplateBean;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    private RabbitMQSenderServiceImpl rabbitMQSender;
 
     @Value("${resource.notification}/email")
     private String emailResource;
@@ -59,7 +77,7 @@ public class TransferBalanceServiceImpl implements ITransferBalanceService {
 
     @Override
     @Transactional
-    public void transferMoney(CardRequestDto cardRequestDto/*, UserTransferLogDto userTransferLogDto, String destinationCardNumber, Integer secondPassword*/) {
+    public void transferMoney(CardRequestDto cardRequestDto) {
 
         //get default currency from env
 //        CurrencyDto currencyDto = currencyService.findByDescriptor(env.getProperty("currency_descriptor"));
@@ -107,6 +125,28 @@ public class TransferBalanceServiceImpl implements ITransferBalanceService {
 
         //todo: 4-2: send notification (sms)
 
+        /*---------------------------------------- SMS & EMAIL NOTIFICATION --------------------------------*/
+        NotificationRequestDto notificationRequestDto = new NotificationRequestDto(
+                "transfer was successfully. " + "\n"
+                        + "withdraw: " + transferBalanceWithdrawDto.getWithdraw() + "\n"
+                        + "balance: " + transferBalanceWithdrawDto.getBalance() + "\n"
+                        + "current time: " + Timestamp.valueOf(LocalDateTime.now()),
+
+                env.getProperty("sender_email"),
+                "Transfer Notification",
+                currentUserDto.getEmail(),
+
+                currentUser.getMobile(),
+                "transfer was successfully. " + "\n"
+                        + "withdraw: " + transferBalanceWithdrawDto.getWithdraw() + "\n"
+                        + "balance: " + transferBalanceWithdrawDto.getBalance() + "\n"
+                        + "current time: " + Timestamp.valueOf(LocalDateTime.now())
+
+        );
+
+        rabbitMQSender.send(notificationRequestDto);
+
+        /*--------------------------------------------- EMAIL ----------------------------------------------*/
         //fill request body for send email
         /*EmailRequestDto emailRequestDto = new EmailRequestDto(
                 "transfer was successfully. " + "\n"
@@ -116,34 +156,50 @@ public class TransferBalanceServiceImpl implements ITransferBalanceService {
 
                 env.getProperty("sender_email"),
                 "Transfer Notification",
-                currentUserDto.getEmail());
+                currentUserDto.getEmail(),
+                "email"
+        );*/
 
         //set headers
-        HttpHeaders headers = new HttpHeaders();
+        /*HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Object> entity = new HttpEntity<Object>(emailRequestDto, headers);
 
         //call rest for send email
         restTemplate.postForObject(emailResource, entity, String.class);*/
 
-        /*-------------------------------------------------------------------------------------------*/
+        //send to rabbit
+//        String orderJson = objectMapper.writeValueAsString(emailRequestDto);
+        /*Message message = MessageBuilder
+                .withBody(emailRequestDto)
+                .setContentType(MessageProperties.CONTENT_TYPE_JSON)
+                .build();*/
+
+
+//        rabbitMQSender.send(emailRequestDto);
+
+        /*--------------------------------------------- SMS ----------------------------------------------*/
 
         //fill request body for send sms
-        SmsRequestDto smsRequestDto = new SmsRequestDto(
+        /*SmsRequestDto smsRequestDto = new SmsRequestDto(
                 currentUser.getMobile(),
                 "transfer was successfully " + "\n"
                         + "withdraw: " + transferBalanceWithdrawDto.getWithdraw() + "\n"
                         + "balance: " + transferBalanceWithdrawDto.getBalance() + "\n"
-                        + "current time: " + Timestamp.valueOf(LocalDateTime.now())
-        );
+                        + "current time: " + Timestamp.valueOf(LocalDateTime.now()),
+                "sms"
+        );*/
 
         //set headers
-        HttpHeaders headers = new HttpHeaders();
+        /*HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Object> entity = new HttpEntity<Object>(smsRequestDto, headers);
 
         //call rest for send sms
-        restTemplate.postForObject(smsResource, entity, String.class);
+        restTemplate.postForObject(smsResource, entity, String.class);*/
+
+        // send to rabbit
+//        rabbitMQSender.send(smsRequestDto);
     }
 
     @Override

@@ -22,11 +22,15 @@ public class EmailRequestDto {
     @JsonProperty("to")
     private String to;
 
+    @JsonProperty("channel_type")
+    private String channelType;
+
     @JsonCreator
-    public EmailRequestDto(String body, String from, String subject, String to) {
+    public EmailRequestDto(String body, String from, String subject, String to, String channelType) {
         this.body = body;
         this.from = from;
         this.subject = subject;
         this.to = to;
+        this.channelType = channelType;
     }
 }

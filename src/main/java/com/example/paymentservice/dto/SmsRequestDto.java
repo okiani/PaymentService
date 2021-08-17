@@ -14,6 +14,9 @@ import java.sql.Timestamp;
 @Data
 public class SmsRequestDto {
 
+    @JsonProperty("channel_type")
+    private String channelType;
+
     @JsonProperty("mobile")
     private String mobile;
 
@@ -32,13 +35,15 @@ public class SmsRequestDto {
     @JsonCreator
     public SmsRequestDto(
             String mobile,
-            String text
+            String text,
+            String channelType
 //            Double balance,
 //            Double withdraw,
 //            Timestamp currentDate
-            ) {
+    ) {
         this.mobile = mobile;
         this.text = text;
+        this.channelType = channelType;
 //        this.balance = balance;
 //        this.withdraw = withdraw;
 //        this.currentDate = currentDate;

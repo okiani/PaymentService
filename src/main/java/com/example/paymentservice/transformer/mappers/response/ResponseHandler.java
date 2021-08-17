@@ -1,4 +1,4 @@
-package com.example.paymentservice.response;
+package com.example.paymentservice.transformer.mappers.response;
 
 import com.example.paymentservice.constant.JsonDictionary;
 import org.springframework.http.HttpStatus;

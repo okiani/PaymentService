@@ -2,7 +2,7 @@ package com.example.paymentservice.controller;
 
 import com.example.paymentservice.constant.JsonDictionary;
 import com.example.paymentservice.dto.CardRequestDto;
-import com.example.paymentservice.response.ResponseHandler;
+import com.example.paymentservice.transformer.mappers.response.ResponseHandler;
 import com.example.paymentservice.service.ITransferBalanceService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +21,7 @@ public class TransferBalanceController {
     }
 
     @PostMapping("/transfer-money")
-    public ResponseEntity<Object> transferMoney(@RequestBody CardRequestDto cardRequestDto/*, UserTransferLogDto userTransferLogDto, String destination_card_number, Integer second_password*/) {
+    public ResponseEntity<Object> transferMoney(@RequestBody CardRequestDto cardRequestDto) {
 
         transferBalanceService.transferMoney(cardRequestDto);
         return ResponseHandler.generateResponse(JsonDictionary.SUCCESS, 200, HttpStatus.OK, null);

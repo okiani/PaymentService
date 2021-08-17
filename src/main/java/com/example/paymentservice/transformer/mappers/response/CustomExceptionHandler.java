@@ -1,4 +1,4 @@
-package com.example.paymentservice.response;
+package com.example.paymentservice.transformer.mappers.response;
 
 import com.example.paymentservice.exception.BusinessException;
 import org.springframework.http.HttpStatus;
@@ -12,7 +12,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<Object> handleCityNotFoundException(BusinessException e, WebRequest request) {
+    public ResponseEntity<Object> NotFoundException(BusinessException e, WebRequest request) {
 
         return ResponseHandler.generateResponse(e.getMessage(), 404, HttpStatus.NOT_FOUND, null);
     }
